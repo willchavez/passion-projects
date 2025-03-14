@@ -4,7 +4,7 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
-import TasksList from '../../components/TasksList';
+import TasksList from '../../components/TaskList';
 import NewTaskModal from '../../components/NewTaskModal';
 
 export default function ProjectDetail() {
