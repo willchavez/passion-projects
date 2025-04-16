@@ -11,6 +11,7 @@ export default function NewTaskModal({ isOpen, onClose, projectId, onAddTask }) 
   const [error, setError] = useState('');
   const [isGeneratingAI, setIsGeneratingAI] = useState(false);
   const [aiOption, setAiOption] = useState('creative');
+  const [aiDescription, setAiDescription] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -67,12 +68,14 @@ export default function NewTaskModal({ isOpen, onClose, projectId, onAddTask }) 
         body: JSON.stringify({
           projectId,
           blockType: aiOption,
+          userDescription: aiDescription,
         }),
       });
 
       const data = await res.json();
 
       if (data.success) {
+        setAiDescription('');
         setTaskData({
           title: data.data.title,
           description: data.data.description,
@@ -96,6 +99,7 @@ export default function NewTaskModal({ isOpen, onClose, projectId, onAddTask }) 
       description: '',
       status: 'pending',
     });
+    setAiDescription('');
     setError('');
   };
 
@@ -125,6 +129,15 @@ export default function NewTaskModal({ isOpen, onClose, projectId, onAddTask }) 
           <div className="card-body p-4">
             <h3 className="card-title text-sm mb-2">Feeling Stuck?</h3>
             <p className="text-sm mb-3">Let AI suggest a task to help you move forward with your project</p>
+            
+            <div className="form-control mb-3">
+              <textarea
+                className="textarea textarea-bordered textarea-sm h-20 text-sm"
+                placeholder="What are you feeling stuck on?"
+                value={aiDescription}
+                onChange={(e) => setAiDescription(e.target.value)}
+              ></textarea>
+            </div>
             
             <div className="flex flex-wrap gap-2 mb-3">
               <label className="cursor-pointer flex items-center gap-1">
@@ -209,7 +222,7 @@ export default function NewTaskModal({ isOpen, onClose, projectId, onAddTask }) 
           <div className="modal-action">
             <button 
               type="button" 
-              className="btn btn-outline"
+              className="btn btn-ghost"
               onClick={onClose}
             >
               Cancel
@@ -219,7 +232,7 @@ export default function NewTaskModal({ isOpen, onClose, projectId, onAddTask }) 
               className={`btn btn-primary ${isLoading ? 'loading' : ''}`}
               disabled={isLoading}
             >
-              {isLoading ? 'Adding...' : 'Add Task'}
+              {isLoading ? 'Creating...' : 'Add Task'}
             </button>
           </div>
         </form>

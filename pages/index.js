@@ -21,7 +21,7 @@ export default function Home() {
       <div className="hero min-h-[70vh]">
         <div className="hero-content text-center">
           <div className="max-w-md">
-            <h1 className="text-5xl font-bold">Passion Projects</h1>
+            <h1 className="text-5xl font-bold">Project Hub</h1>
             <p className="py-6">
               A quirky project management tool to help you organize your passion projects 
               and overcome creative blocks with AI-powered inspiration.
@@ -74,7 +74,7 @@ export default function Home() {
             <div className="card-body">
               <h3 className="card-title">Feeling Stuck?</h3>
               <p className="mb-4">
-                The unique AI assistant in Passion Projects can help you break through creative blocks
+                The unique AI assistant in Project Hub can help you break through creative blocks
                 by suggesting unexpected but relevant tasks to keep your momentum going.
               </p>
               <p>

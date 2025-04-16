@@ -4,7 +4,7 @@ import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 
-export default function Layout({ children, title = 'Passion Projects' }) {
+export default function Layout({ children, title = 'Project Hub' }) {
   const { data: session, status } = useSession();
   const isLoading = status === 'loading';
   const [theme, setTheme] = useState('light');
@@ -25,7 +25,7 @@ export default function Layout({ children, title = 'Passion Projects' }) {
   return (
     <div className="min-h-screen flex flex-col">
       <Head>
-        <title>{title} | Passion Projects</title>
+        <title>{title} | Project Hub</title>
         <meta name="description" content="Manage your passion projects and overcome creative blocks" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -50,7 +50,7 @@ export default function Layout({ children, title = 'Passion Projects' }) {
             </ul>
           </div>
           <Link href="/" className="btn btn-ghost normal-case text-xl">
-            🔥 Passion Projects
+            Project Hub
           </Link>
         </div>
         <div className="navbar-center hidden lg:flex">
@@ -119,7 +119,7 @@ viewBox="0 0 24 24">
 
       <footer className="footer footer-center p-4 bg-base-300 text-base-content">
         <div>
-          <p>Copyright © {new Date().getFullYear()} - Passion Projects</p>
+          <p>Copyright © {new Date().getFullYear()} - Project Hub</p>
         </div>
       </footer>
     </div>

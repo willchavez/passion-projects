@@ -1,13 +1,10 @@
 // pages/api/auth/[...nextauth].js
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { MongoDBAdapter } from '@next-auth/mongodb-adapter';
-import clientPromise from '../../../lib/mongodb-client';
 import User from '../../../models/User';
 import dbConnect from '../../../lib/dbConnect';
 
 export default NextAuth({
-  adapter: MongoDBAdapter(clientPromise),
   providers: [
     CredentialsProvider({
       name: 'Credentials',
@@ -65,4 +62,5 @@ export default NextAuth({
       return token;
     },
   },
+  secret: process.env.NEXTAUTH_SECRET,
 });

@@ -1,12 +1,12 @@
 // pages/api/tasks/index.js
-import { getSession } from 'next-auth/react';
-import dbConnect from '../../../lib/mongodb';
+import { getToken } from 'next-auth/jwt';
+import dbConnect from '../../../lib/dbConnect';
 import { Task, Project } from '../../../models';
 
 export default async function handler(req, res) {
-  const session = await getSession({ req });
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
   
-  if (!session) {
+  if (!token) {
     return res.status(401).json({ message: 'Unauthorized' });
   }
   
@@ -17,30 +17,20 @@ export default async function handler(req, res) {
   switch (method) {
     case 'GET':
       try {
-        // Get projectId from query parameters
-        const { projectId } = req.query;
+        // First get all projects owned by the user
+        const userProjects = await Project.find({ userId: token.id });
+        const projectIds = userProjects.map(project => project._id);
         
-        if (!projectId) {
-          return res.status(400).json({ 
-            success: false, 
-            message: 'Project ID is required' 
-          });
-        }
+        // Build the query - if projectId is provided, filter by it
+        const query = {
+          projectId: req.query.projectId 
+            ? req.query.projectId 
+            : { $in: projectIds }
+        };
         
-        // Verify project belongs to user
-        const project = await Project.findOne({ 
-          _id: projectId,
-          userId: session.user.id 
-        });
+        // Then get tasks based on the query
+        const tasks = await Task.find(query).populate('projectId');
         
-        if (!project) {
-          return res.status(404).json({ 
-            success: false, 
-            message: 'Project not found' 
-          });
-        }
-        
-        const tasks = await Task.find({ projectId });
         res.status(200).json({ success: true, data: tasks });
       } catch (error) {
         res.status(400).json({ success: false, message: error.message });
@@ -49,37 +39,22 @@ export default async function handler(req, res) {
       
     case 'POST':
       try {
-        const { title, description, projectId, status, dueDate, isAiGenerated } = req.body;
-        
-        if (!title || !projectId) {
-          return res.status(400).json({ 
-            success: false, 
-            message: 'Title and project ID are required' 
-          });
-        }
+        const { projectId } = req.body;
         
         // Verify project belongs to user
-        const project = await Project.findOne({ 
+        const project = await Project.findOne({
           _id: projectId,
-          userId: session.user.id 
+          userId: token.id
         });
         
         if (!project) {
-          return res.status(404).json({ 
-            success: false, 
-            message: 'Project not found' 
+          return res.status(404).json({
+            success: false,
+            message: 'Project not found or unauthorized'
           });
         }
         
-        const task = await Task.create({
-          title,
-          description,
-          projectId,
-          status: status || 'pending',
-          dueDate,
-          isAiGenerated: isAiGenerated || false
-        });
-        
+        const task = await Task.create(req.body);
         res.status(201).json({ success: true, data: task });
       } catch (error) {
         res.status(400).json({ success: false, message: error.message });

@@ -94,7 +94,26 @@ const TaskSchema = new mongoose.Schema({
   },
 });
 
+// Waitlist Schema
+const WaitlistSchema = new mongoose.Schema({
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  signupDate: {
+    type: Date,
+    default: Date.now,
+  },
+  status: {
+    type: String,
+    enum: ['pending', 'invited'],
+    default: 'pending'
+  }
+});
+
 // Export models while handling NextJS hot reloading
 export const User = mongoose.models.User || mongoose.model('User', UserSchema);
 export const Project = mongoose.models.Project || mongoose.model('Project', ProjectSchema);
 export const Task = mongoose.models.Task || mongoose.model('Task', TaskSchema);
+export const Waitlist = mongoose.models.Waitlist || mongoose.model('Waitlist', WaitlistSchema);

@@ -53,6 +53,7 @@ export default function NewProject() {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify(projectData),
       });
 
