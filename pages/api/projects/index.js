@@ -1,7 +1,7 @@
 // pages/api/projects/index.js
 import { getToken } from 'next-auth/jwt';
 import dbConnect from '../../../lib/dbConnect';
-import { Project } from '../../../models';
+import { Project, Task } from '../../../models';
 
 export default async function handler(req, res) {
   try {
@@ -18,8 +18,29 @@ export default async function handler(req, res) {
     switch (method) {
       case 'GET':
         try {
+          // Get all projects
           const projects = await Project.find({ userId: token.id });
-          res.status(200).json({ success: true, data: projects });
+          
+          // Get task counts for each project
+          const projectIds = projects.map(project => project._id);
+          const taskCounts = await Task.aggregate([
+            { $match: { projectId: { $in: projectIds } } },
+            { $group: { _id: '$projectId', count: { $sum: 1 } } }
+          ]);
+          
+          // Create a map of project ID to task count
+          const taskCountMap = taskCounts.reduce((acc, curr) => {
+            acc[curr._id.toString()] = curr.count;
+            return acc;
+          }, {});
+          
+          // Add task count to each project
+          const projectsWithTaskCount = projects.map(project => ({
+            ...project.toObject(),
+            taskCount: taskCountMap[project._id.toString()] || 0
+          }));
+          
+          res.status(200).json({ success: true, data: projectsWithTaskCount });
         } catch (error) {
           res.status(400).json({ success: false, message: error.message });
         }

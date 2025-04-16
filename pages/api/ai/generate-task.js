@@ -76,11 +76,18 @@ export default async function handler(req, res) {
     
     const aiTask = completion.choices[0].message.content.trim();
     
+    // Extract URLs from the AI task using a regex pattern
+    const urlPattern = /(https?:\/\/[^\s]+)/g;
+    const urls = aiTask.match(urlPattern) || [];
+    
+    // Clean up the task description by removing the raw URLs
+    const cleanDescription = aiTask.replace(urlPattern, '').trim();
+    
     // Generate a descriptive title from the task
     const titleCompletion = await openai.chat.completions.create({
       messages: [{ 
         role: "user", 
-        content: `Create a short, catchy title (max 10 words) for this task: ${aiTask}` 
+        content: `Create a short, catchy title (max 10 words) for this task: ${cleanDescription}` 
       }],
       model: "gpt-3.5-turbo",
       max_tokens: 30,
@@ -92,7 +99,8 @@ export default async function handler(req, res) {
       success: true, 
       data: {
         title: taskTitle,
-        description: aiTask,
+        description: cleanDescription,
+        urls: urls,
         isAiGenerated: true
       }
     });

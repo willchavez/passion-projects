@@ -6,6 +6,7 @@ export default function NewTaskModal({ isOpen, onClose, projectId, onAddTask }) 
     title: '',
     description: '',
     status: 'pending',
+    urls: []
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -18,6 +19,27 @@ export default function NewTaskModal({ isOpen, onClose, projectId, onAddTask }) 
     setTaskData(prev => ({
       ...prev,
       [name]: value
+    }));
+  };
+
+  const handleAddUrl = () => {
+    setTaskData(prev => ({
+      ...prev,
+      urls: [...prev.urls, '']
+    }));
+  };
+
+  const handleRemoveUrl = (index) => {
+    setTaskData(prev => ({
+      ...prev,
+      urls: prev.urls.filter((_, i) => i !== index)
+    }));
+  };
+
+  const handleUrlChange = (index, value) => {
+    setTaskData(prev => ({
+      ...prev,
+      urls: prev.urls.map((url, i) => i === index ? value : url)
     }));
   };
 
@@ -81,6 +103,7 @@ export default function NewTaskModal({ isOpen, onClose, projectId, onAddTask }) 
           description: data.data.description,
           status: 'pending',
           isAiGenerated: true,
+          urls: data.data.urls || []
         });
       } else {
         setError(data.message || 'Failed to generate AI task');
@@ -98,6 +121,7 @@ export default function NewTaskModal({ isOpen, onClose, projectId, onAddTask }) 
       title: '',
       description: '',
       status: 'pending',
+      urls: []
     });
     setAiDescription('');
     setError('');
@@ -201,6 +225,37 @@ export default function NewTaskModal({ isOpen, onClose, projectId, onAddTask }) 
               value={taskData.description}
               onChange={handleChange}
             ></textarea>
+          </div>
+
+          <div className="form-control mb-4">
+            <label className="label">
+              <span className="label-text">URLs</span>
+              <button 
+                type="button" 
+                className="btn btn-ghost btn-xs"
+                onClick={handleAddUrl}
+              >
+                + Add URL
+              </button>
+            </label>
+            {taskData.urls.map((url, index) => (
+              <div key={index} className="flex gap-2 mb-2">
+                <input
+                  type="url"
+                  className="input input-bordered flex-1"
+                  value={url}
+                  placeholder="https://"
+                  onChange={(e) => handleUrlChange(index, e.target.value)}
+                />
+                <button 
+                  type="button" 
+                  className="btn btn-ghost btn-sm"
+                  onClick={() => handleRemoveUrl(index)}
+                >
+                  ×
+                </button>
+              </div>
+            ))}
           </div>
 
           <div className="form-control mb-6">

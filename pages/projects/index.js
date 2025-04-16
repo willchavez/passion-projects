@@ -140,7 +140,13 @@ export default function ProjectsList() {
                   {project.description && (
                     <p className="text-gray-600 mt-2 line-clamp-2">{project.description}</p>
                   )}
-                  <div className="card-actions justify-end mt-4">
+                  <div className="card-actions justify-between items-center mt-4">
+                    <div className="flex items-center gap-2 text-sm text-gray-500">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                      </svg>
+                      {project.taskCount} {project.taskCount === 1 ? 'task' : 'tasks'}
+                    </div>
                     <span className="text-sm text-gray-500">
                       Created {new Date(project.createdAt).toLocaleDateString()}
                     </span>

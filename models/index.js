@@ -80,6 +80,10 @@ const TaskSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  urls: {
+    type: [String],
+    default: [],
+  },
   dueDate: {
     type: Date,
     required: false,
